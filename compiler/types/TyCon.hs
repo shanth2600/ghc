@@ -115,7 +115,7 @@ module TyCon(
         tyConRepModOcc,
 
         -- * Primitive representations of Types
-        PrimRep(..), PrimElemRep(..),
+        PrimRep(..), PrimElemRep(..), PrimConv(..),
         isVoidRep, isGcPtrRep,
         primRepSizeB,
         primElemRepSizeB,
@@ -1245,7 +1245,7 @@ tyConRepModOcc tc_module tc_occ = (rep_module, mkTyConRepOcc tc_occ)
 
 {- *********************************************************************
 *                                                                      *
-                 PrimRep
+                 PrimRep and PrimConv
 *                                                                      *
 ************************************************************************
 
@@ -1341,6 +1341,9 @@ instance Outputable PrimRep where
 
 instance Outputable PrimElemRep where
   ppr r = text (show r)
+
+
+data PrimConv = EvalU | EvalL deriving( Eq, Show)
 
 isVoidRep :: PrimRep -> Bool
 isVoidRep VoidRep = True

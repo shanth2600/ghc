@@ -83,7 +83,7 @@ module TysPrim(
 import GhcPrelude
 
 import {-# SOURCE #-} TysWiredIn
-  ( runtimeRepTy, unboxedTupleKind, liftedTypeKind
+  ( runtimeRepTy, unboxedTupleKind, liftedTypeKind, promoteDataConToToConTy
   , vecRepDataConTyCon, tupleRepDataConTyCon
   , liftedRepDataConTy, unliftedRepDataConTy, intRepDataConTy
   , wordRepDataConTy, int64RepDataConTy, word64RepDataConTy, addrRepDataConTy
@@ -106,7 +106,6 @@ import FastString
 import Outputable
 import TyCoRep   -- Doesn't need special access, but this is easier to avoid
                  -- import loops which show up if you import Type instead
-
 import Data.Char
 
 {-
@@ -323,9 +322,11 @@ runtimeRep1Ty, runtimeRep2Ty :: Type
 runtimeRep1Ty = mkTyVarTy runtimeRep1TyVar
 runtimeRep2Ty = mkTyVarTy runtimeRep2TyVar
 
+
+
 openAlphaTyVar, openBetaTyVar :: TyVar
 [openAlphaTyVar,openBetaTyVar]
-  = mkTemplateTyVars [tYPE runtimeRep1Ty, tYPE runtimeRep2Ty]
+  = mkTemplateTyVars [tYPE runtimeRep1Ty runtimeConv, tYPE runtimeRep2Ty runtimeConv]
 
 openAlphaTy, openBetaTy :: Type
 openAlphaTy = mkTyVarTy openAlphaTyVar
@@ -354,8 +355,8 @@ funTyCon = mkFunTyCon funTyConName tc_bndrs tc_rep_nm
     tc_bndrs = [ TvBndr runtimeRep1TyVar (NamedTCB Inferred)
                , TvBndr runtimeRep2TyVar (NamedTCB Inferred)
                ]
-               ++ mkTemplateAnonTyConBinders [ tYPE runtimeRep1Ty
-                                             , tYPE runtimeRep2Ty
+               ++ mkTemplateAnonTyConBinders [ tYPE runtimeRep1Ty runtimeConv
+                                             , tYPE runtimeRep2Ty runtimeConv
                                              ]
     tc_rep_nm = mkPrelTyConRepName funTyConName
 
@@ -492,10 +493,12 @@ mkPrimTcName built_in_syntax occ key tycon
   = mkWiredInName gHC_PRIM (mkTcOccFS occ) key (ATyCon tycon) built_in_syntax
 
 -----------------------------
--- | Given a RuntimeRep, applies TYPE to it.
+-- | Given a RuntimeRep and CallingConv, applies TYPE to them.
 -- see Note [TYPE and RuntimeRep]
-tYPE :: Type -> Type
-tYPE rr = TyConApp tYPETyCon [rr]
+tYPE :: Type -> Type -> Type
+tYPE rr cc = TyConApp tYPETyCon [rr, cc]
+
+runtimeConv = promoteDataConToToConTy EvalL
 
 {-
 ************************************************************************

@@ -92,7 +92,7 @@ module TysWiredIn (
         typeNatKindCon, typeNatKind, typeSymbolKindCon, typeSymbolKind,
         isLiftedTypeKindTyConName, liftedTypeKind, constraintKind,
         liftedTypeKindTyCon, constraintKindTyCon,
-        liftedTypeKindTyConName,
+        liftedTypeKindTyConName, promoteDataConToToConTy,
 
         -- * Equality predicates
         heqTyCon, heqClass, heqDataCon,
@@ -1136,6 +1136,8 @@ liftedRepDataConTy, unliftedRepDataConTy,
    intRepDataConTy, wordRepDataConTy, int64RepDataConTy,
    word64RepDataConTy, addrRepDataConTy, floatRepDataConTy, doubleRepDataConTy]
   = map (mkTyConTy . promoteDataCon) runtimeRepSimpleDataCons
+
+promoteDataConToToConTy = mkTyConTy . promoteDataCon
 
 vecCountTyCon :: TyCon
 vecCountTyCon = pcTyCon vecCountTyConName Nothing [] vecCountDataCons
