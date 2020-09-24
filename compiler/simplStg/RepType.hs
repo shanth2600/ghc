@@ -37,6 +37,7 @@ import Util
 import TysPrim
 import {-# SOURCE #-} TysWiredIn ( anyTypeOfKind )
 
+
 import Data.List (foldl', sort)
 import qualified Data.IntSet as IS
 
@@ -254,8 +255,7 @@ typeSlotTy ty
 
 primRepSlot :: PrimRep -> SlotTy
 primRepSlot VoidRep     = pprPanic "primRepSlot" (text "No slot for VoidRep")
-primRepSlot LiftedRep   = PtrSlot
-primRepSlot UnliftedRep = PtrSlot
+primRepSlot PtrRep      = PtrSlot
 primRepSlot IntRep      = WordSlot
 primRepSlot WordRep     = WordSlot
 primRepSlot Int64Rep    = Word64Slot
@@ -266,7 +266,7 @@ primRepSlot DoubleRep   = DoubleSlot
 primRepSlot VecRep{}    = pprPanic "primRepSlot" (text "No slot for VecRep")
 
 slotPrimRep :: SlotTy -> PrimRep
-slotPrimRep PtrSlot     = LiftedRep   -- choice between lifted & unlifted seems arbitrary
+slotPrimRep PtrSlot     = PtrRep
 slotPrimRep Word64Slot  = Word64Rep
 slotPrimRep WordSlot    = WordRep
 slotPrimRep DoubleSlot  = DoubleRep
@@ -362,4 +362,4 @@ runtimeRepPrimRep doc rr_ty
 -- | Convert a PrimRep back to a Type. Used only in the unariser to give types
 -- to fresh Ids. Really, only the type's representation matters.
 primRepToType :: PrimRep -> Type
-primRepToType = anyTypeOfKind . tYPE . primRepToRuntimeRep
+primRepToType p = anyTypeOfKind $ tYPE (primRepToRuntimeRep p) (primConvToRuntimeConv (PrimEval TyCon.L))

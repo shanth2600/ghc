@@ -38,7 +38,7 @@ module OccName (
         pprNameSpace, pprNonVarNameSpace, pprNameSpaceBrief,
 
         -- * The 'OccName' type
-        OccName,        -- Abstract, instance of Outputable
+        OccName (..),        -- Abstract, instance of Outputable
         pprOccName,
 
         -- ** Construction

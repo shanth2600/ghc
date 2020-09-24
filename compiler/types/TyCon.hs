@@ -6,7 +6,7 @@
 The @TyCon@ datatype
 -}
 
-{-# LANGUAGE CPP, FlexibleInstances #-}
+{-# LANGUAGE CPP, FlexibleInstances, TypeSynonymInstances #-}
 
 module TyCon(
         -- * Main TyCon data types
@@ -115,12 +115,11 @@ module TyCon(
         tyConRepModOcc,
 
         -- * Primitive representations of Types
-        PrimRep(..), PrimElemRep(..), PrimConv(..),
+        PrimRep(..), PrimElemRep(..), PrimConv(..), PrimLevity(..), PrimArity(..),
         isVoidRep, isGcPtrRep,
         primRepSizeB,
         primElemRepSizeB,
         primRepIsFloat,
-
         -- * Recursion breaking
         RecTcChecker, initRecTc, checkRecTc
 
@@ -156,6 +155,9 @@ import Util
 import Unique( tyConRepNameUnique, dataConTyRepNameUnique )
 import UniqSet
 import Module
+import Var ( Var, KindVar )
+import Name
+import OccName ( OccName (..) )
 import {-# SOURCE #-} DataCon
 
 import qualified Data.Data as Data
@@ -1311,8 +1313,7 @@ CmmType GcPtrCat W32 on a 64-bit machine.
 -- and store values of this type.
 data PrimRep
   = VoidRep
-  | LiftedRep
-  | UnliftedRep   -- ^ Unlifted pointer
+  | PtrRep        -- ^ Pointer to heap allocated object
   | IntRep        -- ^ Signed, word-sized value
   | WordRep       -- ^ Unsigned, word-sized value
   | Int64Rep      -- ^ Signed, 64 bit value (with 32-bit words only)
@@ -1342,17 +1343,28 @@ instance Outputable PrimRep where
 instance Outputable PrimElemRep where
   ppr r = text (show r)
 
+data PrimLevity = U | L
+  deriving( Eq, Show)
 
-data PrimConv = EvalU | EvalL deriving( Eq, Show)
+data PrimArity = 
+    PrimArityArgs [PrimRep] 
+  | PrimArity PrimConv
+  deriving( Eq, Show)
+
+data PrimConv = 
+    PrimInt Int 
+  | PrimEval PrimLevity 
+  | PrimCall [PrimArity] 
+  deriving( Eq, Show)
 
 isVoidRep :: PrimRep -> Bool
 isVoidRep VoidRep = True
 isVoidRep _other  = False
 
 isGcPtrRep :: PrimRep -> Bool
-isGcPtrRep LiftedRep   = True
-isGcPtrRep UnliftedRep = True
-isGcPtrRep _           = False
+
+isGcPtrRep PtrRep = True
+isGcPtrRep _      = False
 
 -- | The size of a 'PrimRep' in bytes.
 --
@@ -1369,8 +1381,7 @@ primRepSizeB _      Word64Rep        = wORD64_SIZE
 primRepSizeB _      FloatRep         = fLOAT_SIZE
 primRepSizeB dflags DoubleRep        = dOUBLE_SIZE dflags
 primRepSizeB dflags AddrRep          = wORD_SIZE dflags
-primRepSizeB dflags LiftedRep        = wORD_SIZE dflags
-primRepSizeB dflags UnliftedRep      = wORD_SIZE dflags
+primRepSizeB dflags PtrRep           = wORD_SIZE dflags
 primRepSizeB _      VoidRep          = 0
 primRepSizeB _      (VecRep len rep) = len * primElemRepSizeB rep
 

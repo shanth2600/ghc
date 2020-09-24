@@ -1,7 +1,7 @@
 module TysWiredIn where
 
 import Var( TyVar, ArgFlag )
-import {-# SOURCE #-} TyCon      ( TyCon )
+import {-# SOURCE #-} TyCon      ( TyCon, PrimConv )
 import {-# SOURCE #-} TyCoRep    (Type, Kind)
 
 
@@ -20,11 +20,11 @@ constraintKind :: Kind
 runtimeRepTyCon, vecCountTyCon, vecElemTyCon :: TyCon
 runtimeRepTy :: Type
 
+
 liftedRepDataConTyCon, vecRepDataConTyCon, tupleRepDataConTyCon :: TyCon
 
-liftedRepDataConTy, unliftedRepDataConTy, intRepDataConTy,
-  wordRepDataConTy, int64RepDataConTy, word64RepDataConTy, addrRepDataConTy,
-  floatRepDataConTy, doubleRepDataConTy :: Type
+ptrRepDataConTy, intRepDataConTy, wordRepDataConTy, int64RepDataConTy, 
+  word64RepDataConTy, addrRepDataConTy, floatRepDataConTy, doubleRepDataConTy :: Type
 
 vec2DataConTy, vec4DataConTy, vec8DataConTy, vec16DataConTy, vec32DataConTy,
   vec64DataConTy :: Type

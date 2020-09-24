@@ -2062,6 +2062,10 @@ typeLitSymbolDataConKey, typeLitNatDataConKey :: Unique
 typeLitSymbolDataConKey   = mkPreludeDataConUnique 107
 typeLitNatDataConKey      = mkPreludeDataConUnique 108
 
+runtimeConvSimpleDataConKeys :: [Unique]
+runtimeConvSimpleDataConKeys = 
+  map mkPreludeDataConUnique [109..111]
+
 
 ---------------- Template Haskell -------------------
 --      THNames.hs: USES DataUniques 200-250
