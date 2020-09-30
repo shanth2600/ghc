@@ -137,8 +137,7 @@ isDllConApp dflags this_mod con args
 -- The coercion argument here gets VoidRep
 isAddrRep :: PrimRep -> Bool
 isAddrRep AddrRep     = True
-isAddrRep LiftedRep   = True
-isAddrRep UnliftedRep = True
+isAddrRep PtrRep      = True
 isAddrRep _           = False
 
 -- | Type of an @StgArg@

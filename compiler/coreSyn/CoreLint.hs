@@ -1386,6 +1386,7 @@ lintType ty@(FunTildeTy t1 t2)
        ; k2 <- lintType t2
        ; lintArrow (text "type or kind" <+> quotes (ppr ty)) k1 k2 }
 
+
 lintType t@(ForAllTy (TvBndr tv _vis) ty)
   = do { lintL (isTyVar tv) (text "Covar bound in type:" <+> ppr t)
        ; lintTyBndr tv $ \tv' ->

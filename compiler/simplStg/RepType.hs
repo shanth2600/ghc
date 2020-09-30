@@ -11,8 +11,8 @@ module RepType
     isVoidTy,
 
     -- * Type representation for the code generator
-    typePrimRep, typePrimRep1,
-    runtimeRepPrimRep, typePrimRepArgs,
+    typePrimRep, typePrimConv, typePrimRep1,
+    runtimeRepPrimRep, runtimeRepPrimConv, typePrimRepArgs,
     PrimRep(..), primRepToType,
     countFunRepArgs, countConRepArgs, tyConPrimRep, tyConPrimRep1,
 
@@ -355,11 +355,43 @@ runtimeRepPrimRep doc rr_ty
   = runtimeRepPrimRep doc rr_ty'
   | TyConApp rr_dc args <- rr_ty
   , RuntimeRep fun <- tyConRuntimeRepInfo rr_dc
-  = fun args
+  = map fst (fun args)
   | otherwise
   = pprPanic "runtimeRepPrimRep" (doc $$ ppr rr_ty)
 
 -- | Convert a PrimRep back to a Type. Used only in the unariser to give types
 -- to fresh Ids. Really, only the type's representation matters.
 primRepToType :: PrimRep -> Type
-primRepToType p = anyTypeOfKind $ tYPE (primRepToRuntimeRep p) (primConvToRuntimeConv (PrimEval TyCon.L))
+primRepToType p = anyTypeOfKind $ (primRepToRuntimeRep p)
+
+{- **********************************************************************
+*                                                                       *
+                   PrimConv
+*                                                                       *
+********************************************************************** -}
+
+typePrimConv :: HasDebugCallStack => Type -> [PrimConv]
+typePrimConv ty = kindPrimConv (text "typePrimConv" <+>
+                              parens (ppr ty <+> dcolon <+> ppr (typeKind ty)))
+                             (typeKind ty)
+
+runtimeRepPrimConv :: HasDebugCallStack => SDoc -> Type -> [PrimConv]
+runtimeRepPrimConv doc rr_ty
+  | Just rr_ty' <- coreView rr_ty
+  = runtimeRepPrimConv doc rr_ty'
+  | TyConApp rr_dc args <- rr_ty
+  , RuntimeRep fun <- tyConRuntimeRepInfo rr_dc
+  = map snd (fun args)
+  | otherwise
+  = pprPanic "runtimeRepPrimConv" (doc $$ ppr rr_ty)
+
+
+kindPrimConv :: HasDebugCallStack => SDoc -> Kind -> [PrimConv]
+kindPrimConv doc ki
+  | Just ki' <- coreView ki
+  = kindPrimConv doc ki'
+kindPrimConv doc (TyConApp typ [runtime_rep, runtime_conv])
+  = ASSERT( typ `hasKey` tYPETyConKey )
+    runtimeRepPrimConv doc runtime_conv
+kindPrimConv doc ki
+  = pprPanic "kindPrimConv" (ppr ki $$ doc)

@@ -953,7 +953,8 @@ promoteTcType dest_lvl ty
     promote_it  -- Emit a constraint  (alpha :: TYPE rr) ~ ty
                 -- where alpha and rr are fresh and from level dest_lvl
       = do { rr      <- newMetaTyVarTyAtLevel dest_lvl runtimeRepTy
-           ; prom_ty <- newMetaTyVarTyAtLevel dest_lvl (tYPE rr)
+           ; rc      <- newMetaTyVarTyAtLevel dest_lvl runtimeConvTy
+           ; prom_ty <- newMetaTyVarTyAtLevel dest_lvl (tYPE rr rc)
            ; let eq_orig = TypeEqOrigin { uo_actual   = ty
                                         , uo_expected = prom_ty
                                         , uo_thing    = Nothing

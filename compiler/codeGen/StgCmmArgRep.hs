@@ -66,8 +66,7 @@ argRepString V64 = "V64"
 
 toArgRep :: PrimRep -> ArgRep
 toArgRep VoidRep           = V
-toArgRep LiftedRep         = P
-toArgRep UnliftedRep       = P
+toArgRep PtrRep            = P
 toArgRep IntRep            = N
 toArgRep WordRep           = N
 toArgRep AddrRep           = N

@@ -1767,13 +1767,17 @@ eitherTyConKey                          = mkPreludeTyConUnique 84
 -- Kind constructors
 liftedTypeKindTyConKey, tYPETyConKey,
   constraintKindTyConKey, runtimeRepTyConKey,
-  vecCountTyConKey, vecElemTyConKey :: Unique
+  vecCountTyConKey, convLevityTyDataConTyConKey, convLevityDataConTyConKey :: Unique
 liftedTypeKindTyConKey                  = mkPreludeTyConUnique 87
 tYPETyConKey                            = mkPreludeTyConUnique 88
 constraintKindTyConKey                  = mkPreludeTyConUnique 92
 runtimeRepTyConKey                      = mkPreludeTyConUnique 95
 vecCountTyConKey                        = mkPreludeTyConUnique 96
 vecElemTyConKey                         = mkPreludeTyConUnique 97
+convLevityTyDataConTyConKey             = mkPreludeTyConUnique 98
+convLevityDataConTyConKey               = mkPreludeTyConUnique 99
+runtimeConvTyConKey                     = mkPreludeTyConUnique 100
+
 
 pluginTyConKey, frontendPluginTyConKey :: Unique
 pluginTyConKey                          = mkPreludeTyConUnique 102
@@ -2062,9 +2066,9 @@ typeLitSymbolDataConKey, typeLitNatDataConKey :: Unique
 typeLitSymbolDataConKey   = mkPreludeDataConUnique 107
 typeLitNatDataConKey      = mkPreludeDataConUnique 108
 
-runtimeConvSimpleDataConKeys :: [Unique]
-runtimeConvSimpleDataConKeys = 
-  map mkPreludeDataConUnique [109..111]
+convLevityTyDataConKeys :: [Unique]
+convLevityTyDataConKeys = 
+  map mkPreludeDataConUnique [109, 110]
 
 
 ---------------- Template Haskell -------------------

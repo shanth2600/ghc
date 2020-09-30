@@ -53,7 +53,7 @@ module IfaceType (
 import GhcPrelude
 
 import {-# SOURCE #-} TysWiredIn ( coercibleTyCon, heqTyCon
-                                 , liftedRepDataConTyCon )
+                                 , ptrRepDataConTyCon )
 import {-# SOURCE #-} TyCoRep    ( isRuntimeRepTy )
 
 import DynFlags
@@ -814,7 +814,7 @@ defaultRuntimeRepVars sty = go emptyFsEnv
     liftedRep :: IfaceTyCon
     liftedRep =
         IfaceTyCon dc_name (IfaceTyConInfo IsPromoted IfaceNormalTyCon)
-      where dc_name = getName liftedRepDataConTyCon
+      where dc_name = getName ptrRepDataConTyCon
 
     isRuntimeRep :: IfaceType -> Bool
     isRuntimeRep (IfaceTyConApp tc _) =

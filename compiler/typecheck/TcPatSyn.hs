@@ -26,7 +26,7 @@ import TcMType
 import TcHsSyn( zonkTyVarBindersX, zonkTcTypeToTypes
               , zonkTcTypeToType, emptyZonkEnv )
 import TysPrim
-import TysWiredIn  ( runtimeRepTy )
+import TysWiredIn  ( runtimeRepTy, runtimeConvTy )
 import Name
 import SrcLoc
 import PatSyn
@@ -636,11 +636,15 @@ tcPatSynMatcher (L loc name) lpat
                 (ex_tvs, ex_tys, prov_theta, prov_dicts)
                 (args, arg_tys) pat_ty
   = do { rr_name <- newNameAt (mkTyVarOcc "rep") loc
-       ; tv_name <- newNameAt (mkTyVarOcc "r")   loc
+       ; rc_name <- newNameAt (mkTyVarOcc "conv") loc
+       ; rr_tv_name <- newNameAt (mkTyVarOcc "r")   loc
+       ; rc_tv_name <- newNameAt (mkTyVarOcc "c")   loc
        ; let rr_tv  = mkTyVar rr_name runtimeRepTy
              rr     = mkTyVarTy rr_tv
-             res_tv = mkTyVar tv_name (tYPE rr)
              res_ty = mkTyVarTy res_tv
+             rc_tv  = mkTyVar rr_name runtimeConvTy
+             rc     = mkTyVarTy rc_tv
+             res_tv = mkTyVar rr_tv_name (tYPE rr rc)
              is_unlifted = null args && null prov_dicts
              (cont_args, cont_arg_tys)
                | is_unlifted = ([nlHsVar voidPrimId], [voidPrimTy])

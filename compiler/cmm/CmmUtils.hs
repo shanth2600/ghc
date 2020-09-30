@@ -93,8 +93,7 @@ import Hoopl.Collections
 
 primRepCmmType :: DynFlags -> PrimRep -> CmmType
 primRepCmmType _      VoidRep          = panic "primRepCmmType:VoidRep"
-primRepCmmType dflags LiftedRep        = gcWord dflags
-primRepCmmType dflags UnliftedRep      = gcWord dflags
+primRepCmmType dflags PtrRep           = gcWord dflags
 primRepCmmType dflags IntRep           = bWord dflags
 primRepCmmType dflags WordRep          = bWord dflags
 primRepCmmType _      Int64Rep         = b64
@@ -128,8 +127,7 @@ typeCmmType dflags ty = primRepCmmType dflags (typePrimRep1 ty)
 
 primRepForeignHint :: PrimRep -> ForeignHint
 primRepForeignHint VoidRep      = panic "primRepForeignHint:VoidRep"
-primRepForeignHint LiftedRep    = AddrHint
-primRepForeignHint UnliftedRep  = AddrHint
+primRepForeignHint PtrRep       = AddrHint
 primRepForeignHint IntRep       = SignedHint
 primRepForeignHint WordRep      = NoHint
 primRepForeignHint Int64Rep     = SignedHint

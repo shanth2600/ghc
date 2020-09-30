@@ -9,7 +9,7 @@ mkFunKind :: Kind -> Kind -> Kind
 mkForAllKind :: TyVar -> ArgFlag -> Kind -> Kind
 
 listTyCon :: TyCon
-typeNatKind, typeSymbolKind :: Type
+intTy, typeNatKind, typeSymbolKind :: Type
 mkBoxedTupleTy :: [Type] -> Type
 
 coercibleTyCon, heqTyCon :: TyCon
@@ -21,10 +21,11 @@ runtimeRepTyCon, vecCountTyCon, vecElemTyCon :: TyCon
 runtimeRepTy :: Type
 
 
-liftedRepDataConTyCon, vecRepDataConTyCon, tupleRepDataConTyCon :: TyCon
+ptrRepDataConTyCon, vecRepDataConTyCon, tupleRepDataConTyCon,
+  convCountDataConTyCon, convLevityDataConTyCon, convLevityTyDataConTyCon :: TyCon
 
 ptrRepDataConTy, intRepDataConTy, wordRepDataConTy, int64RepDataConTy, 
-  word64RepDataConTy, addrRepDataConTy, floatRepDataConTy, doubleRepDataConTy :: Type
+  word64RepDataConTy, addrRepDataConTy, floatRepDataConTy, doubleRepDataConTy, convLevityTy :: Type
 
 vec2DataConTy, vec4DataConTy, vec8DataConTy, vec16DataConTy, vec32DataConTy,
   vec64DataConTy :: Type

@@ -295,7 +295,7 @@ might_be_a_function :: Type -> Bool
 -- Return False only if we are *sure* it's a data type
 -- Look through newtypes etc as much as poss
 might_be_a_function ty
-  | [LiftedRep] <- typePrimRep ty
+  | [PtrRep] <- typePrimRep ty
   , Just tc <- tyConAppTyCon_maybe (unwrapType ty)
   , isDataTyCon tc
   = False

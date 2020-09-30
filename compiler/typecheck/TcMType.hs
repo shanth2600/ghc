@@ -432,7 +432,8 @@ inferResultToType :: InferResult -> TcM Type
 inferResultToType (IR { ir_uniq = u, ir_lvl = tc_lvl
                       , ir_ref = ref })
   = do { rr  <- newMetaTyVarTyAtLevel tc_lvl runtimeRepTy
-       ; tau <- newMetaTyVarTyAtLevel tc_lvl (tYPE rr)
+       ; cc  <- newMetaTyVarTyAtLevel tc_lvl runtimeConvTy
+       ; tau <- newMetaTyVarTyAtLevel tc_lvl (tYPE rr cc)
              -- See Note [TcLevel of ExpType]
        ; writeMutVar ref (Just tau)
        ; traceTc "Forcing ExpType to be monomorphic:"
@@ -859,7 +860,8 @@ newFlexiTyVarTys n kind = mapM newFlexiTyVarTy (nOfThem n kind)
 newOpenTypeKind :: TcM TcKind
 newOpenTypeKind
   = do { rr <- newFlexiTyVarTy runtimeRepTy
-       ; return (tYPE rr) }
+       ; cc  <- newFlexiTyVarTy runtimeConvTy
+       ; return (tYPE rr cc) }
 
 -- | Create a tyvar that can be a lifted or unlifted type.
 -- Returns alpha :: TYPE kappa, where both alpha and kappa are fresh

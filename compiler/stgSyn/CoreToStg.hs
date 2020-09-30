@@ -499,19 +499,30 @@ mkStgAltType bndr alts
   = MultiValAlt (length prim_reps)  -- always use MultiValAlt for unboxed tuples
 
   | otherwise
-  = case prim_reps of
-      [LiftedRep] -> case tyConAppTyCon_maybe (unwrapType bndr_ty) of
+  = case (prim_reps, prim_convs) of
+      ( _ ,[(PrimEval Lifted)]) -> case tyConAppTyCon_maybe (unwrapType bndr_ty) of
         Just tc
           | isAbstractTyCon tc -> look_for_better_tycon
           | isAlgTyCon tc      -> AlgAlt tc
           | otherwise          -> ASSERT2( _is_poly_alt_tycon tc, ppr tc )
                                   PolyAlt
         Nothing                -> PolyAlt
-      [unlifted] -> PrimAlt unlifted
-      not_unary  -> MultiValAlt (length not_unary)
+      ([unlifted], _) -> PrimAlt unlifted
+      (not_unary, _)  -> MultiValAlt (length not_unary)
+  -- = case prim_reps of
+  --     [LiftedRep] -> case tyConAppTyCon_maybe (unwrapType bndr_ty) of
+  --       Just tc
+  --         | isAbstractTyCon tc -> look_for_better_tycon
+  --         | isAlgTyCon tc      -> AlgAlt tc
+  --         | otherwise          -> ASSERT2( _is_poly_alt_tycon tc, ppr tc )
+  --                                 PolyAlt
+  --       Nothing                -> PolyAlt
+  --     [unlifted] -> PrimAlt unlifted
+  --     not_unary  -> MultiValAlt (length not_unary)
   where
    bndr_ty   = idType bndr
    prim_reps = typePrimRep bndr_ty
+   prim_convs = typePrimConv bndr_ty
 
    _is_poly_alt_tycon tc
         =  isFunTyCon tc

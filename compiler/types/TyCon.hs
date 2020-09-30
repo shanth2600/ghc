@@ -825,10 +825,11 @@ data TyCon
         tyConKind    :: Kind,             -- ^ Kind of this TyCon
         tyConArity   :: Arity,            -- ^ Arity
 
-        tcRoles       :: [Role],    -- ^ Roles: N for kind vars, R for type vars
-        dataCon       :: DataCon,   -- ^ Corresponding data constructor
-        tcRepName     :: TyConRepName,
-        promDcRepInfo :: RuntimeRepInfo  -- ^ See comments with 'RuntimeRepInfo'
+        tcRoles        :: [Role],    -- ^ Roles: N for kind vars, R for type vars
+        dataCon        :: DataCon,   -- ^ Corresponding data constructor
+        tcRepName      :: TyConRepName,
+        promDcRepInfo  :: RuntimeRepInfo  -- ^ See comments with 'RuntimeRepInfo'
+        
     }
 
   -- | These exist only during a recursive type/class type-checking knot.
@@ -944,11 +945,14 @@ mkDataTyConRhs cons
 -- up things like @RuntimeRep@'s @PrimRep@ by known-key every time.
 data RuntimeRepInfo
   = NoRRI       -- ^ an ordinary promoted data con
-  | RuntimeRep ([Type] -> [PrimRep])
+  | RuntimeRep ([Type] -> [(PrimRep, PrimConv)])
       -- ^ A constructor of @RuntimeRep@. The argument to the function should
       -- be the list of arguments to the promoted datacon.
   | VecCount Int         -- ^ A constructor of @VecCount@
   | VecElem PrimElemRep  -- ^ A constructor of @VecElem@
+  | ConvCount Int
+  | ConvEval PrimLevity
+  | ConvCall [PrimArity]
 
 -- | Extract those 'DataCon's that we are able to learn about.  Note
 -- that visibility in this sense does not correspond to visibility in
@@ -1343,7 +1347,7 @@ instance Outputable PrimRep where
 instance Outputable PrimElemRep where
   ppr r = text (show r)
 
-data PrimLevity = U | L
+data PrimLevity = Unlifted | Lifted
   deriving( Eq, Show)
 
 data PrimArity = 
@@ -1352,9 +1356,9 @@ data PrimArity =
   deriving( Eq, Show)
 
 data PrimConv = 
-    PrimInt Int 
+    PrimCount Int 
   | PrimEval PrimLevity 
-  | PrimCall [PrimArity] 
+  | PrimConvCall [PrimArity] 
   deriving( Eq, Show)
 
 isVoidRep :: PrimRep -> Bool

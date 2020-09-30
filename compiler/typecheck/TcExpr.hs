@@ -1191,7 +1191,8 @@ tcApp m_herald fun@(L loc (HsVar _ (L _ fun_id))) args res_ty
   | fun_id `hasKey` seqIdKey
   , n_val_args == 2
   = do { rep <- newFlexiTyVarTy runtimeRepTy
-       ; let [alpha, beta] = mkTemplateTyVars [liftedTypeKind, tYPE rep]
+       ; conv <- newFlexiTyVarTy runtimeConvTy
+       ; let [alpha, beta] = mkTemplateTyVars [liftedTypeKind, tYPE rep conv]
              seq_ty = mkSpecForAllTys [alpha,beta]
                       (mkTyVarTy alpha `mkFunTy` mkTyVarTy beta `mkFunTy` mkTyVarTy beta)
              seq_fun = L loc (HsVar noExt (L loc seqId))
