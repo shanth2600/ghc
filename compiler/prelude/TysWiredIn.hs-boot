@@ -25,7 +25,8 @@ ptrRepDataConTyCon, vecRepDataConTyCon, tupleRepDataConTyCon,
   convCountDataConTyCon, convLevityDataConTyCon, convLevityTyDataConTyCon :: TyCon
 
 ptrRepDataConTy, intRepDataConTy, wordRepDataConTy, int64RepDataConTy, 
-  word64RepDataConTy, addrRepDataConTy, floatRepDataConTy, doubleRepDataConTy, convLevityTy :: Type
+  word64RepDataConTy, addrRepDataConTy, floatRepDataConTy, doubleRepDataConTy, 
+  convLevityTy, runtimeConvTy, convLevityLiftedTy, convLevityUnliftedTy :: Type
 
 vec2DataConTy, vec4DataConTy, vec8DataConTy, vec16DataConTy, vec32DataConTy,
   vec64DataConTy :: Type

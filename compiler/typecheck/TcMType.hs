@@ -860,8 +860,8 @@ newFlexiTyVarTys n kind = mapM newFlexiTyVarTy (nOfThem n kind)
 newOpenTypeKind :: TcM TcKind
 newOpenTypeKind
   = do { rr <- newFlexiTyVarTy runtimeRepTy
-       ; cc  <- newFlexiTyVarTy runtimeConvTy
-       ; return (tYPE rr cc) }
+       ; rc  <- newFlexiTyVarTy runtimeConvTy
+       ; return (tYPE rr rc) }
 
 -- | Create a tyvar that can be a lifted or unlifted type.
 -- Returns alpha :: TYPE kappa, where both alpha and kappa are fresh

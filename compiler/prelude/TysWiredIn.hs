@@ -94,7 +94,8 @@ module TysWiredIn (
         liftedTypeKindTyCon, constraintKindTyCon,
         liftedTypeKindTyConName, convLevityTyDataConTyCon,
         convLevityDataConTyCon, convCountDataConTyCon,
-        convLevityTy,
+        convLevityTy, runtimeConvTy,
+        convLevityLiftedTy, convLevityUnliftedTy,
         
 
         -- * Equality predicates
@@ -1211,10 +1212,19 @@ convLevityTyDataConNames = zipWith3Lazy mk_special_dc_name
 convLevityTyDataCons :: [DataCon]
 convLevityTyDataCons = zipWithLazy mk_conv_levity_dc
                     [ Lifted, Unlifted]
-                    vecElemDataConNames
+                    convLevityTyDataConNames
   where
     mk_conv_levity_dc levity name
       = pcSpecialDataCon name [] convLevityTyDataConTyCon (ConvEval levity)
+
+convLevityLiftedDataCon, convLevityUnliftedDataCon :: DataCon
+[convLevityLiftedDataCon, convLevityUnliftedDataCon] = convLevityTyDataCons
+
+convLevityLiftedTy, convLevityUnliftedTy :: Type
+convLevityLiftedTy = mkTyConTy $ promoteDataCon convLevityLiftedDataCon
+convLevityUnliftedTy = mkTyConTy $ promoteDataCon convLevityUnliftedDataCon
+
+
 
 convLevityTyDataConTyCon :: TyCon
 convLevityTyDataConTyCon = pcTyCon convLevityTyDataConTyConName Nothing [] convLevityTyDataCons      

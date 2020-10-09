@@ -95,8 +95,8 @@ import {-# SOURCE #-} TysWiredIn
   , int64ElemRepDataConTy, word8ElemRepDataConTy, word16ElemRepDataConTy
   , word32ElemRepDataConTy, word64ElemRepDataConTy, floatElemRepDataConTy
   , doubleElemRepDataConTy
-  , convLevityDataConTyCon, convCountDataConTyCon, convLevityTy
-  , mkPromotedListTy )
+  , convLevityDataConTyCon, convCountDataConTyCon, convLevityTy, runtimeConvTy
+  , mkPromotedListTy, convLevityLiftedTy, convLevityUnliftedTy )
 
 import {-# SOURCE #-} DataCon           ( promoteDataCon )  
 
@@ -478,7 +478,7 @@ tYPETyCon :: TyCon
 tYPETyConName :: Name
 
 tYPETyCon = mkKindTyCon tYPETyConName
-                        (mkTemplateAnonTyConBinders [runtimeRepTy])
+                        (mkTemplateAnonTyConBinders [runtimeRepTy, runtimeConvTy])
                         liftedTypeKind
                         [Nominal]
                         (mkPrelTyConRepName tYPETyConName)
@@ -503,7 +503,7 @@ mkPrimTcName built_in_syntax occ key tycon
 -- | Given a RuntimeRep and CallingConv, applies TYPE to them.
 -- see Note [TYPE and RuntimeRep]
 tYPE :: Type -> Type -> Type
-tYPE rr cc = TyConApp tYPETyCon [rr, cc]
+tYPE rr rc = TyConApp tYPETyCon [rr, rc]
 
 evalU = PrimEval TyCon.Unlifted
 evalL = PrimEval TyCon.Lifted
@@ -569,7 +569,8 @@ primRepToRuntimeRep rep = case rep of
 primConvToRuntimeConv :: PrimConv -> Type
 primConvToRuntimeConv conv = case conv of
   PrimCount n -> TyConApp convCountDataConTyCon [intTy]
-  PrimEval l  -> TyConApp convLevityDataConTyCon [primConvToRuntimeConv l]
+  PrimEval Lifted  -> TyConApp convLevityDataConTyCon [convLevityLiftedTy]
+  PrimEval Unlifted  -> TyConApp convLevityDataConTyCon [convLevityUnliftedTy]
 
 
 
