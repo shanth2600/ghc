@@ -105,7 +105,7 @@ module TysWiredIn (
         -- * RuntimeRep and friends
         runtimeRepTyCon, vecCountTyCon, vecElemTyCon,
 
-        runtimeRepTy, runtimeConvTy, liftedRepTy, ptrRepDataCon, ptrRepDataConTyCon,
+        runtimeRepTy, runtimeConvTy, ptrRepTy, ptrRepDataCon, ptrRepDataConTyCon,
 
         vecRepDataConTyCon, tupleRepDataConTyCon, sumRepDataConTyCon,
 
@@ -569,7 +569,7 @@ constraintKindTyCon :: TyCon
 constraintKindTyCon = pcTyCon constraintKindTyConName Nothing [] []
 
 liftedTypeKind, constraintKind :: Kind
-liftedTypeKind   = tYPE liftedRepTy runtimeConvL
+liftedTypeKind   = tYPE ptrRepTy runtimeConvL
 constraintKind   = mkTyConApp constraintKindTyCon []
 
 -- mkFunKind and mkForAllKind are defined here
@@ -1274,8 +1274,8 @@ convLevityDataCon = pcSpecialDataCon convLevityDataConName [ mkTyConTy convLevit
 
 
 -- The type ('LiftedRep)
-liftedRepTy :: Type
-liftedRepTy = tYPE ptrRepDataConTy (primConvToRuntimeConv $ PrimEval TyCon.Lifted)
+ptrRepTy :: Type
+ptrRepTy = ptrRepDataConTy
 
 {- *********************************************************************
 *                                                                      *

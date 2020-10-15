@@ -1722,7 +1722,7 @@ zonkTypeZapping :: UnboundTyVarZonker
 -- vars which it zonks to LiftedRep
 -- Works on both types and kinds
 zonkTypeZapping tv
-  = do { let ty | isRuntimeRepVar tv = liftedRepTy
+  = do { let ty | isRuntimeRepVar tv = liftedTypeKind
                 | otherwise          = anyTypeOfKind (tyVarKind tv)
        ; writeMetaTyVar tv ty
        ; return ty }
