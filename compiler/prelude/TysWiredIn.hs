@@ -1187,8 +1187,6 @@ int8ElemRepDataConTy, int16ElemRepDataConTy, int32ElemRepDataConTy,
   doubleElemRepDataConTy] = map (mkTyConTy . promoteDataCon)
                                 vecElemDataCons
 
--- liftedRepDataConTyCon :: TyCon
--- liftedRepDataConTyCon = undefined
 
 ptrRepDataConTyCon = promoteDataCon ptrRepDataCon
 
@@ -1237,7 +1235,7 @@ convLevityTyDataConTyConName = mkWiredInTyConName UserSyntax gHC_TYPES (fsLit "C
 
 convCountDataCon :: DataCon
 convCountDataCon = pcSpecialDataCon convCountDataConName [ mkTyConTy intTyCon ]
-                                 runtimeRepTyCon
+                                 runtimeConvTyCon
                                  (RuntimeRep prim_rep_fun)
   where
     prim_rep_fun [int]
@@ -1262,7 +1260,7 @@ convLevityDataConTyCon = promoteDataCon convLevityDataCon
 
 convLevityDataCon :: DataCon
 convLevityDataCon = pcSpecialDataCon convLevityDataConName [ mkTyConTy convLevityTyDataConTyCon ]
-                                 runtimeRepTyCon
+                                 runtimeConvTyCon
                                  (RuntimeRep prim_rep_fun)
   where
     prim_rep_fun [int]
