@@ -2075,9 +2075,9 @@ getRuntimeRepFromKind_maybe = go
   where
     go k | Just k' <- coreView k = go k'
     go k
-      | Just (_tc, [arg]) <- splitTyConApp_maybe k
+      | Just (_tc, (rep : _ ) ) <- splitTyConApp_maybe k
       = ASSERT2( _tc `hasKey` tYPETyConKey, ppr k )
-        Just arg
+        Just rep
     go _ = Nothing
 
 isUnboxedTupleType :: Type -> Bool
