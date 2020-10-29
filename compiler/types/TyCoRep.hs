@@ -817,7 +817,7 @@ tcIsTYPE _ _ = False
 isLiftedTypeKind :: Kind -> Bool
 isLiftedTypeKind = isTYPE is_lifted
   where
-    is_lifted (TyConApp lifted_rep []) = lifted_rep `hasKey` liftedRepDataConKey
+    is_lifted (TyConApp lifted_rep []) = lifted_rep `hasKey` liftedTypeKindTyConKey
     is_lifted _                        = False
 
 -- | Returns True if the kind classifies unlifted types and False otherwise.

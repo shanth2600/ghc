@@ -378,7 +378,7 @@ fpTYPELiftedRep = fingerprintFingerprints
 trTYPE :: TypeRep TYPE
 trTYPE = typeRep
 
-trLiftedRep :: TypeRep 'LiftedRep
+trLiftedRep :: TypeRep 'PtrRep
 trLiftedRep = typeRep
 
 -- | Construct a representation for a type application that is

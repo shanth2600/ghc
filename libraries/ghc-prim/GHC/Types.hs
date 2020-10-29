@@ -57,7 +57,7 @@ infixr 5 :
 data Constraint
 
 -- | The kind of types with values. For example @Int :: Type@.
-type Type = TYPE 'LiftedRep
+type Type = TYPE 'PtrRep ('Eval 'Lifted)
 
 {- *********************************************************************
 *                                                                      *
@@ -367,8 +367,7 @@ data SPEC = SPEC | SPEC2
 data RuntimeRep = VecRep VecCount VecElem   -- ^ a SIMD vector type
                 | TupleRep [RuntimeRep]     -- ^ An unboxed tuple of the given reps
                 | SumRep [RuntimeRep]       -- ^ An unboxed sum of the given reps
-                | LiftedRep       -- ^ lifted; represented by a pointer
-                | UnliftedRep     -- ^ unlifted; represented by a pointer
+                | PtrRep          -- ^ represented by a pointer
                 | IntRep          -- ^ signed, word-sized value
                 | WordRep         -- ^ unsigned, word-sized value
                 | Int64Rep        -- ^ signed, 64-bit value (on 32-bit only)
@@ -400,6 +399,20 @@ data VecElem = Int8ElemRep
              | FloatElemRep
              | DoubleElemRep
 -- Enum, Bounded instances in GHC.Enum
+
+data RuntimeLevity = Unlifted | Lifted
+
+
+data RuntimeArity = 
+    ArityArgs [RuntimeRep] 
+  | Arity RuntimeConv
+
+
+data RuntimeConv = 
+    Count Int 
+  | Eval RuntimeLevity 
+  | ConvCall [RuntimeArity] 
+
 
 {- *********************************************************************
 *                                                                      *
