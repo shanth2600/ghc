@@ -803,7 +803,7 @@ tcIsTYPE :: (   Type    -- the single argument to TYPE; not a synonym
              -> Bool )  -- what to return
          -> Kind -> Bool
 tcIsTYPE f ki | Just ki' <- tcView ki = tcIsTYPE f ki'
-tcIsTYPE f (TyConApp tc [arg])
+tcIsTYPE f (TyConApp tc (arg : _))
   | tc `hasKey` tYPETyConKey
   = go arg
     where

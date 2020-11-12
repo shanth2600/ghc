@@ -47,7 +47,7 @@ import TcSMonad  as TcS
 import TcType
 import TrieMap       () -- DV: for now
 import Type
-import TysWiredIn    ( liftedTypeKind )
+import TysWiredIn    ( ptrRepTy )
 import Unify         ( tcMatchTyKi )
 import Util
 import Var
@@ -1958,7 +1958,7 @@ defaultTyVarTcS the_tv
                              -- never with a type; c.f. TcMType.defaultTyVar
                              -- See Note [Kind generalisation and SigTvs]
   = do { traceTcS "defaultTyVarTcS RuntimeRep" (ppr the_tv)
-       ; unifyTyVar the_tv liftedTypeKind
+       ; unifyTyVar the_tv ptrRepTy
        ; return True }
   | otherwise
   = return False  -- the common case

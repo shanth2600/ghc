@@ -84,7 +84,7 @@ module TysPrim(
 import GhcPrelude
 
 import {-# SOURCE #-} TysWiredIn
-  ( intTy, runtimeRepTy, unboxedTupleKind, liftedTypeKind
+  ( intTy, runtimeRepTy, unboxedTupleKind, liftedTypeKind, ptrRepTy
   , vecRepDataConTyCon, tupleRepDataConTyCon
   , ptrRepDataConTy, intRepDataConTy
   , wordRepDataConTy, int64RepDataConTy, word64RepDataConTy, addrRepDataConTy

@@ -1091,7 +1091,7 @@ defaultTyVar default_kind tv
   | isRuntimeRepVar tv  -- Do not quantify over a RuntimeRep var
                         -- unless it is a SigTv, handled earlier
   = do { traceTc "Defaulting a RuntimeRep var to LiftedRep" (ppr tv)
-       ; writeMetaTyVar tv liftedTypeKind
+       ; writeMetaTyVar tv ptrRepTy
        ; return True }
 
   | default_kind                 -- -XNoPolyKinds and this is a kind var

@@ -1,6 +1,6 @@
 {-# LANGUAGE MagicHash, NoImplicitPrelude, TypeFamilies, UnboxedTuples,
              MultiParamTypeClasses, RoleAnnotations, CPP, TypeOperators,
-             PolyKinds #-}
+             DataKinds, PolyKinds #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  GHC.Types
