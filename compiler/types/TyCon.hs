@@ -115,7 +115,7 @@ module TyCon(
         tyConRepModOcc,
 
         -- * Primitive representations of Types
-        PrimRep(..), PrimElemRep(..), PrimConv(..), PrimLevity(..), PrimArity(..),
+        PrimRep(..), PrimElemRep(..), PrimConv(..), PrimLevity(..),
         isVoidRep, isGcPtrRep,
         primRepSizeB,
         primElemRepSizeB,
@@ -952,7 +952,7 @@ data RuntimeRepInfo
   | VecElem PrimElemRep  -- ^ A constructor of @VecElem@
   | ConvCount Int
   | ConvEval PrimLevity
-  | ConvCall [PrimArity]
+  | ConvCall [PrimRep]
 
 -- | Extract those 'DataCon's that we are able to learn about.  Note
 -- that visibility in this sense does not correspond to visibility in
@@ -1350,15 +1350,10 @@ instance Outputable PrimElemRep where
 data PrimLevity = Unlifted | Lifted
   deriving( Eq, Show)
 
-data PrimArity = 
-    PrimArityArgs [PrimRep] 
-  | PrimArity PrimConv
-  deriving( Eq, Show)
 
-data PrimConv = 
-    PrimCount Int 
-  | PrimEval PrimLevity 
-  | PrimConvCall [PrimArity] 
+data PrimConv =  
+    PrimEval PrimLevity 
+  | PrimConvCall [PrimRep] 
   deriving( Eq, Show)
 
 isVoidRep :: PrimRep -> Bool

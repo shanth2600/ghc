@@ -95,7 +95,7 @@ import {-# SOURCE #-} TysWiredIn
   , int64ElemRepDataConTy, word8ElemRepDataConTy, word16ElemRepDataConTy
   , word32ElemRepDataConTy, word64ElemRepDataConTy, floatElemRepDataConTy
   , doubleElemRepDataConTy
-  , convLevityDataConTyCon, convCountDataConTyCon, convLevityTy, runtimeConvTy
+  , convLevityDataConTyCon, convLevityTy, runtimeConvTy
   , mkPromotedListTy, convLevityLiftedTy, convLevityUnliftedTy )
 
 import {-# SOURCE #-} DataCon           ( promoteDataCon )  
@@ -568,7 +568,6 @@ primRepToRuntimeRep rep = case rep of
 
 primConvToRuntimeConv :: PrimConv -> Type
 primConvToRuntimeConv conv = case conv of
-  PrimCount n -> TyConApp convCountDataConTyCon [intTy]
   PrimEval Lifted  -> TyConApp convLevityDataConTyCon [convLevityLiftedTy]
   PrimEval Unlifted  -> TyConApp convLevityDataConTyCon [convLevityUnliftedTy]
 

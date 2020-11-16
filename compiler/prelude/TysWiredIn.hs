@@ -93,8 +93,7 @@ module TysWiredIn (
         isLiftedTypeKindTyConName, liftedTypeKind, constraintKind,
         liftedTypeKindTyCon, constraintKindTyCon,
         liftedTypeKindTyConName, convLevityTyDataConTyCon,
-        convLevityDataConTyCon, convCountDataConTyCon,
-        convLevityTy, runtimeConvTy,
+        convLevityDataConTyCon, convLevityTy, runtimeConvTy,
         convLevityLiftedTy, convLevityUnliftedTy,
         
 
@@ -1233,22 +1232,6 @@ convLevityTy = mkTyConTy convLevityTyDataConTyCon
 convLevityTyDataConTyConName :: Name
 convLevityTyDataConTyConName = mkWiredInTyConName UserSyntax gHC_TYPES (fsLit "ConvLevity") convLevityTyDataConTyConKey convLevityTyDataConTyCon
 
-convCountDataCon :: DataCon
-convCountDataCon = pcSpecialDataCon convCountDataConName [ mkTyConTy intTyCon ]
-                                 runtimeConvTyCon
-                                 (RuntimeRep prim_rep_fun)
-  where
-    prim_rep_fun [int]
-      | ConvCount n <- tyConRuntimeRepInfo (tyConAppTyCon int)
-      = [(IntRep, PrimCount n)]
-    prim_rep_fun args
-      = pprPanic "convCountDataCon" (ppr args)
-
-convCountDataConName :: Name
-convCountDataConName = mkWiredInTyConName UserSyntax gHC_TYPES (fsLit "PrimCount") runtimeConvTyConKey runtimeConvTyCon      
-
-convCountDataConTyCon :: TyCon
-convCountDataConTyCon = promoteDataCon convCountDataCon
 
 -------------------------------------------
 

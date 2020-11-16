@@ -22,7 +22,7 @@ runtimeRepTy :: Type
 
 
 ptrRepDataConTyCon, vecRepDataConTyCon, tupleRepDataConTyCon,
-  convCountDataConTyCon, convLevityDataConTyCon, convLevityTyDataConTyCon :: TyCon
+  convLevityDataConTyCon, convLevityTyDataConTyCon :: TyCon
 
 ptrRepDataConTy, intRepDataConTy, wordRepDataConTy, int64RepDataConTy, 
   word64RepDataConTy, addrRepDataConTy, floatRepDataConTy, doubleRepDataConTy, 
