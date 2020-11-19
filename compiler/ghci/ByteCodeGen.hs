@@ -1822,7 +1822,7 @@ atomPrimRep (AnnLit l)              = typePrimRep1 (literalType l)
 -- Trac #12128:
 -- A case expression can be an atom because empty cases evaluate to bottom.
 -- See Note [Empty case alternatives] in coreSyn/CoreSyn.hs
--- atomPrimRep (AnnCase _ _ ty _)      = ASSERT(typePrimConv ty == [(PrimEval Lifted)]) (PrimEval Lifted)
+-- atomPrimRep (AnnCase _ _ ty _)      = ASSERT(typePrimConv ty == [(ConvEval Lifted)]) (ConvEval Lifted)
 atomPrimRep (AnnCoercion {})        = VoidRep
 atomPrimRep other = pprPanic "atomPrimRep" (ppr (deAnnotate' other))
 

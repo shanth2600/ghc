@@ -950,9 +950,8 @@ data RuntimeRepInfo
       -- be the list of arguments to the promoted datacon.
   | VecCount Int         -- ^ A constructor of @VecCount@
   | VecElem PrimElemRep  -- ^ A constructor of @VecElem@
-  | ConvCount Int
-  | ConvEval PrimLevity
-  | ConvCall [PrimRep]
+  | RuntimeConvEval PrimLevity
+  | RuntimeConvCall [PrimRep]
 
 -- | Extract those 'DataCon's that we are able to learn about.  Note
 -- that visibility in this sense does not correspond to visibility in
@@ -1352,8 +1351,8 @@ data PrimLevity = Unlifted | Lifted
 
 
 data PrimConv =  
-    PrimEval PrimLevity 
-  | PrimConvCall [PrimRep] 
+    ConvEval PrimLevity 
+  | ConvCall [PrimRep] 
   deriving( Eq, Show)
 
 isVoidRep :: PrimRep -> Bool

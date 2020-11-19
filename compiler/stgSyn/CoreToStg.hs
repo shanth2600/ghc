@@ -500,7 +500,7 @@ mkStgAltType bndr alts
 
   | otherwise
   = case (prim_reps, prim_convs) of
-      ( _ ,[(PrimEval Lifted)]) -> case tyConAppTyCon_maybe (unwrapType bndr_ty) of
+      ( _ ,[(ConvEval Lifted)]) -> case tyConAppTyCon_maybe (unwrapType bndr_ty) of
         Just tc
           | isAbstractTyCon tc -> look_for_better_tycon
           | isAlgTyCon tc      -> AlgAlt tc

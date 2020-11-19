@@ -1767,7 +1767,7 @@ eitherTyConKey                          = mkPreludeTyConUnique 84
 -- Kind constructors
 liftedTypeKindTyConKey, tYPETyConKey,
   constraintKindTyConKey, runtimeRepTyConKey,
-  vecCountTyConKey, convLevityTyDataConTyConKey, convLevityDataConTyConKey :: Unique
+  vecCountTyConKey, convLevityTyDataConTyConKey, convEvalDataConTyConKey :: Unique
 liftedTypeKindTyConKey                  = mkPreludeTyConUnique 87
 tYPETyConKey                            = mkPreludeTyConUnique 88
 constraintKindTyConKey                  = mkPreludeTyConUnique 92
@@ -1775,8 +1775,9 @@ runtimeRepTyConKey                      = mkPreludeTyConUnique 95
 vecCountTyConKey                        = mkPreludeTyConUnique 96
 vecElemTyConKey                         = mkPreludeTyConUnique 97
 convLevityTyDataConTyConKey             = mkPreludeTyConUnique 98
-convLevityDataConTyConKey               = mkPreludeTyConUnique 99
-runtimeConvTyConKey                     = mkPreludeTyConUnique 100
+convEvalDataConTyConKey                 = mkPreludeTyConUnique 99
+convCallDataConTyConKey                 = mkPreludeTyConUnique 100
+runtimeConvTyConKey                     = mkPreludeTyConUnique 101
 
 
 pluginTyConKey, frontendPluginTyConKey :: Unique

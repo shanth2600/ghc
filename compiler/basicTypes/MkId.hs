@@ -1209,7 +1209,7 @@ unsafeCoerceId
     --                         (a :: TYPE r1) (b :: TYPE r2).
     --                         a -> b
     bndrs = mkTemplateKiTyVars [runtimeRepTy, runtimeRepTy]
-                               (\ks -> zipWith tYPE ks (repeat (primConvToRuntimeConv $ PrimEval Unlifted)))
+                               (\ks -> zipWith tYPE ks (repeat (primConvToRuntimeConv $ ConvEval Lifted)))
 
     [_, _, a, b] = mkTyVarTys bndrs
 

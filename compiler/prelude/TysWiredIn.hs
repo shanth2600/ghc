@@ -93,7 +93,7 @@ module TysWiredIn (
         isLiftedTypeKindTyConName, liftedTypeKind, constraintKind,
         liftedTypeKindTyCon, constraintKindTyCon,
         liftedTypeKindTyConName, convLevityTyDataConTyCon,
-        convLevityDataConTyCon, convLevityTy, runtimeConvTy,
+        convEvalDataConTyCon, convLevityTy, runtimeConvTy,
         convLevityLiftedTy, convLevityUnliftedTy,
         
 
@@ -226,6 +226,10 @@ wiredInTyCons = [ -- Units are not treated like other tuples, because then
                 , vecElemTyCon
                 , constraintKindTyCon
                 , liftedTypeKindTyCon
+                , runtimeConvTyCon
+                , convLevityTyDataConTyCon
+                , convEvalDataConTyCon
+                , convCallDataConTyCon
                 ]
 
 mkWiredInTyConName :: BuiltInSyntax -> Module -> FastString -> Unique -> TyCon -> Name
@@ -1060,8 +1064,8 @@ mk_class tycon sc_pred sc_sel_id
 runtimeRepTy :: Type
 runtimeRepTy = mkTyConTy runtimeRepTyCon
 
-liftedConv   = PrimEval Lifted
-unliftedConv = PrimEval Unlifted
+liftedConv   = ConvEval Lifted
+unliftedConv = ConvEval Unlifted
 
 -- Type synonyms; see Note [TYPE and RuntimeRep] in TysPrim
 -- type Type = tYPE 'LiftedRep
@@ -1096,7 +1100,7 @@ tupleRepDataCon = pcSpecialDataCon tupleRepDataConName [ mkListTy runtimeRepTy ]
                                    runtimeRepTyCon (RuntimeRep prim_rep_fun)
   where
     prim_rep_fun [rr_ty_list]
-      = zip  (concatMap (runtimeRepPrimRep doc) rr_tys) $ repeat liftedConv
+      = zip  (concatMap (runtimeRepPrimRep doc) rr_tys) (concatMap (runtimeRepPrimConv doc) rr_tys)
       where
         rr_tys = extractPromotedList rr_ty_list
         doc    = text "tupleRepDataCon" <+> ppr rr_tys
@@ -1111,11 +1115,12 @@ sumRepDataCon = pcSpecialDataCon sumRepDataConName [ mkListTy runtimeRepTy ]
                                  runtimeRepTyCon (RuntimeRep prim_rep_fun)
   where
     prim_rep_fun [rr_ty_list]
-      = zip (map slotPrimRep (ubxSumRepType prim_repss)) $ repeat liftedConv
+      = zip (map slotPrimRep (ubxSumRepType prim_repss)) prim_convs
       where
         rr_tys     = extractPromotedList rr_ty_list
         doc        = text "sumRepDataCon" <+> ppr rr_tys
         prim_repss = map (runtimeRepPrimRep doc) rr_tys
+        prim_convs = concatMap (runtimeRepPrimConv doc) rr_tys
     prim_rep_fun args
       = pprPanic "sumRepDataCon" (ppr args)
 
@@ -1197,7 +1202,7 @@ runtimeConvTy = mkTyConTy runtimeConvTyCon
 
 runtimeConvTyCon :: TyCon
 runtimeConvTyCon = pcTyCon runtimeConvTyConName Nothing []
-                          (convLevityTyDataCons)
+                          ([convEvalDataCon, convCallDataCon])
 
 convLevityTyDataConNames :: [Name]
 convLevityTyDataConNames = zipWith3Lazy mk_special_dc_name
@@ -1212,7 +1217,7 @@ convLevityTyDataCons = zipWithLazy mk_conv_levity_dc
                     convLevityTyDataConNames
   where
     mk_conv_levity_dc levity name
-      = pcSpecialDataCon name [] convLevityTyDataConTyCon (ConvEval levity)
+      = pcSpecialDataCon name [] convLevityTyDataConTyCon (RuntimeConvEval levity)
 
 convLevityLiftedDataCon, convLevityUnliftedDataCon :: DataCon
 [convLevityLiftedDataCon, convLevityUnliftedDataCon] = convLevityTyDataCons
@@ -1230,28 +1235,43 @@ convLevityTy :: Type
 convLevityTy = mkTyConTy convLevityTyDataConTyCon
 
 convLevityTyDataConTyConName :: Name
-convLevityTyDataConTyConName = mkWiredInTyConName UserSyntax gHC_TYPES (fsLit "ConvLevity") convLevityTyDataConTyConKey convLevityTyDataConTyCon
+convLevityTyDataConTyConName = mkWiredInTyConName UserSyntax gHC_TYPES (fsLit "RuntimeLevity") convLevityTyDataConTyConKey convLevityTyDataConTyCon
 
 
--------------------------------------------
+convEvalDataConName :: Name
+convEvalDataConName = mkWiredInDataConName UserSyntax gHC_TYPES (fsLit "ConvEval") convEvalDataConTyConKey convEvalDataCon
 
-convLevityDataConName :: Name
-convLevityDataConName = mkWiredInTyConName UserSyntax gHC_TYPES (fsLit "PrimEval") runtimeConvTyConKey runtimeConvTyCon      
+convEvalDataConTyCon :: TyCon
+convEvalDataConTyCon = promoteDataCon convEvalDataCon
 
-convLevityDataConTyCon :: TyCon
-convLevityDataConTyCon = promoteDataCon convLevityDataCon
-
-convLevityDataCon :: DataCon
-convLevityDataCon = pcSpecialDataCon convLevityDataConName [ mkTyConTy convLevityTyDataConTyCon ]
+convEvalDataCon :: DataCon
+convEvalDataCon = pcSpecialDataCon convEvalDataConName [ mkTyConTy convLevityTyDataConTyCon ]
                                  runtimeConvTyCon
                                  (RuntimeRep prim_rep_fun)
   where
-    prim_rep_fun [int]
-      | ConvCount n <- tyConRuntimeRepInfo (tyConAppTyCon int)
-      = [(PtrRep, (PrimEval Lifted))]
+    prim_rep_fun [l]
+      | RuntimeConvEval l <- tyConRuntimeRepInfo (tyConAppTyCon l)
+      = [(PtrRep, (ConvEval l))]
     prim_rep_fun args
-      = pprPanic "convLevityDataCon" (ppr args)
+      = pprPanic "convEvalDataCon" (ppr args)
 
+convCallDataConName :: Name
+convCallDataConName = mkWiredInDataConName UserSyntax gHC_TYPES (fsLit "ConvCall") convCallDataConTyConKey convCallDataCon            
+
+convCallDataCon :: DataCon
+convCallDataCon = pcSpecialDataCon convCallDataConName [ mkListTy runtimeRepTy ]
+                                 runtimeConvTyCon
+                                 (RuntimeRep prim_rep_fun)
+  where
+    prim_rep_fun [rr_ty_list]
+      = zip  (concatMap (runtimeRepPrimRep doc) rr_tys) (concatMap (runtimeRepPrimConv doc) rr_tys)
+      where
+        rr_tys = extractPromotedList rr_ty_list
+        doc    = text "tupleRepDataCon" <+> ppr rr_tys
+        prim_rep_fun args = pprPanic "tupleRepDataCon" (ppr args)    
+
+convCallDataConTyCon :: TyCon
+convCallDataConTyCon = promoteDataCon convCallDataCon
 
 
 -- The type ('LiftedRep)

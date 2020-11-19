@@ -57,7 +57,7 @@ infixr 5 :
 data Constraint
 
 -- | The kind of types with values. For example @Int :: Type@.
-type Type = TYPE 'PtrRep ('Eval 'Lifted)
+type Type = TYPE 'PtrRep ('ConvEval 'Lifted)
 
 {- *********************************************************************
 *                                                                      *
@@ -403,15 +403,10 @@ data VecElem = Int8ElemRep
 data RuntimeLevity = Unlifted | Lifted
 
 
-data RuntimeArity = 
-    ArityArgs [RuntimeRep] 
-  | Arity RuntimeConv
 
-
-data RuntimeConv = 
-    Count Int 
-  | Eval RuntimeLevity 
-  | ConvCall [RuntimeArity] 
+data RuntimeConv =  
+    ConvEval RuntimeLevity 
+  | ConvCall [RuntimeRep] 
 
 
 {- *********************************************************************
