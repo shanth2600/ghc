@@ -1205,13 +1205,13 @@ unsafeCoerceId
     info = noCafIdInfo `setInlinePragInfo` alwaysInlinePragma
                        `setUnfoldingInfo`  mkCompulsoryUnfolding rhs
 
-    -- unsafeCoerce# :: forall (r1 :: RuntimeRep) (r2 :: RuntimeRep)
-    --                         (a :: TYPE r1) (b :: TYPE r2).
+    -- unsafeCoerce# :: forall (r1 :: RuntimeRep) (c1 :: RuntimeConv) (r2 :: RuntimeRep) (c2 :: RuntimeConv)
+    --                         (a :: TYPE r1 c1) (b :: TYPE r2 c2).
     --                         a -> b
-    bndrs = mkTemplateKiTyVars [runtimeRepTy, runtimeRepTy]
-                               (\ks -> zipWith tYPE ks (repeat (primConvToRuntimeConv $ ConvEval Lifted)))
+    bndrs = mkTemplateKiTyVars [runtimeRepTy, runtimeConvTy, runtimeRepTy, runtimeConvTy]
+                               (\[r1, c1, r2, c2] -> [tYPE r1 c1, tYPE r2 c2])
 
-    [_, _, a, b] = mkTyVarTys bndrs
+    [_, _, _, _,  a, b] = mkTyVarTys bndrs
 
     ty  = mkSpecForAllTys bndrs (mkFunTy a b)
 
