@@ -402,9 +402,9 @@ data VecElem = Int8ElemRep
 
 data RuntimeLevity = Unlifted | Lifted
 
-type family ArityOf v where
-  ArityOf (Eval _) = []
-  ArityOf (Call a) = a
+-- type family ArityOf v where
+  -- ArityOf (ConvEval _) = []
+  -- ArityOf (ConvCall v) = v
 
 data RuntimeConv =  
     ConvEval RuntimeLevity 

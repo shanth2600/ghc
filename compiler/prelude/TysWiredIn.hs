@@ -1133,7 +1133,7 @@ ptrRepDataCon :: DataCon
 runtimeRepSimpleDataCons@(ptrRepDataCon : _)
   = zipWithLazy mk_runtime_rep_dc
     [ (PtrRep, liftedConv), (IntRep, unliftedConv), (WordRep, unliftedConv), (Int64Rep, unliftedConv)
-    , (Word64Rep, unliftedConv), (AddrRep, unliftedConv), (FloatRep, unliftedConv), (DoubleRep, unliftedConv) ]
+    , (Word64Rep, unliftedConv), (AddrRep, liftedConv), (FloatRep, unliftedConv), (DoubleRep, unliftedConv) ]
     runtimeRepSimpleDataConNames
   where
     mk_runtime_rep_dc primrep name
